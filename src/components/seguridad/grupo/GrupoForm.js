@@ -2,30 +2,32 @@ import React, { useEffect, useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import { changeStatusForm, dataGrupo, resetModal, saveGrupo, updateGrupo }
     from "../../../redux/seguridad/grupoDucks"
+import InputFieldComponent from "../../InputFieldComponent";
+import TextAreaFieldComponent from "../../TextAreaFieldComponent";
 
 const GrupoForm = () => {
-    const dispatch = useDispatch()
-    const grupoRedux = useSelector(store => store.grupo)
+    const dispatch = useDispatch();
+    const grupoRedux = useSelector(store => store.grupo);
 
-    const [loadForm, setLoadForm] = useState(true)
-    const [getGrupo, setGetGrupo] = useState(!grupoRedux.save)
+    const [loadForm, setLoadForm] = useState(true);
+    const [getGrupo, setGetGrupo] = useState(!grupoRedux.save);
     const [grupo, setGrupo] = useState({
         nombre: "", descripcion: ""
-    })
+    });
 
     useEffect(() => {
         return () => {
             dispatch(changeStatusForm(true))//Para editar -> cambia estado de save a true
         }
-    }, [dispatch])
+    }, [dispatch]);
 
     useEffect(() => {
         if (loadForm) {
-            dispatch(resetModal())
+            dispatch(resetModal());
             setLoadForm(false)
         }
 
-    }, [loadForm, dispatch])
+    }, [loadForm, dispatch]);
 
     useEffect(() => {
         if (getGrupo) {
@@ -34,31 +36,21 @@ const GrupoForm = () => {
                 nombre: grupoRedux.data.nombre,
                 descripcion: grupoRedux.data.descripcion,
                 id: grupoRedux.data.id
-            })
+            });
 
             setGetGrupo(false);
         }
-    }, [getGrupo, grupoRedux, grupo])
+    }, [getGrupo, grupoRedux, grupo]);
 
     const handleChange = (e) => {
         setGrupo({
             ...grupo,
             [e.target.name]: e.target.value
         })
-    }
+    };
 
     const submitForm = (e) => {
         e.preventDefault();
-
-        if (grupo.nombre.trim() === "") {
-            alert("Ingresar un nombre");
-            return;
-        }
-
-        if (grupo.descripcion.trim() === "") {
-            alert("Ingresar un correo");
-            return
-        }
 
         dispatch(dataGrupo(grupo));
         let response = false;
@@ -74,13 +66,13 @@ const GrupoForm = () => {
 
         if (response)
             resetForm()
-    }
+    };
 
     const resetForm = () => {
         setGrupo({
             nombre: "", descripcion: ""
         })
-    }
+    };
 
     return (
         <form onSubmit={(e) => submitForm(e)}>
@@ -96,38 +88,24 @@ const GrupoForm = () => {
                     <i className="fas fa-check-circle" /> {grupoRedux.process.message}
                 </div>
             }
-
-            <div className="form-group">
-                <label>Nombre</label>
-                <div className="input-group mb-2">
-                    <div className="input-group-prepend">
-                        <div className="input-group-text">
-                            <i className="fas fa-font" />
-                        </div>
-                    </div>
-                    <input
-                        name="nombre"
-                        value={grupo.nombre} onChange={(e) => handleChange(e)}
-                        type="text"
-                        className="form-control"
-                        required />
-                </div>
-            </div>
-            <div className="form-group">
-                <label>Descripcion</label>
-                <div className="input-group mb-2">
-                    <div className="input-group-prepend">
-                        <div className="input-group-text">
-                            <i className="fas fa-align-left" />
-                        </div>
-                    </div>
-                    <textarea
-                        name="descripcion"
-                        value={grupo.descripcion}
-                        onChange={(e) => handleChange(e)}
-                        className="form-control" required />
-                </div>
-            </div>
+            <InputFieldComponent
+                label="Nombre"
+                name="nombre"
+                value={grupo.nombre}
+                icon="fas fa-user"
+                eventChange={handleChange}
+                error={grupoRedux.error}
+                required={false}
+            />
+            <TextAreaFieldComponent
+                label="Descripcion"
+                name="descripcion"
+                value={grupo.descripcion}
+                icon="fas fa-user"
+                eventChange={handleChange}
+                error={grupoRedux.error}
+                required={false}
+            />
             <button className="btn btn-success"
                 disabled={grupoRedux.loading}>
                 {grupoRedux.loading ? <i className="fas fa-spinner fa-pulse" /> : <i className="fas fa-save" />}

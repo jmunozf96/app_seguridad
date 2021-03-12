@@ -1,13 +1,14 @@
 import React, { memo, useCallback, useEffect, useState } from "react"
-
-import UserService from "../../../services/UserService";
 import { useSelector } from "react-redux";
+
 import TableComponent from "../../TableComponent";
-import UserItem from "./UserItem";
 import ModalComponent from "../../ModalComponent";
 
+import UserItem from "./UserItem";
 import UserGrupos from "./UserGrupos";
 
+import UserService from "../../../services/UserService";
+import GrupoService from "../../../services/GrupoService";
 
 const UserList = memo(({ load, setLoad, setShowModal }) => {
     const auth = useSelector(store => store.auth.user)
@@ -20,24 +21,25 @@ const UserList = memo(({ load, setLoad, setShowModal }) => {
         show: false,
         user: null,
         perfil: []
-    })
+    });
 
     const closeActionModalGrupo = () => {
         setShowGrupo({ show: false, user: null, perfil: [] });
+        GrupoService.cancel_request().cancel("Se desmonto el componente.");
         setLoad(true);
-    }
+    };
 
     const listar = useCallback((page) => {
         (async => {
             UserService.all(page, auth._token)
                 .then(response => {
-                    const { data } = response
+                    const { data } = response;
                     setUsers(data.response);
                 }).catch(error => {
                     console.log(error);
                 })
         })();
-    }, [auth])
+    }, [auth]);
 
     useEffect(() => {
         if (load) {
@@ -49,7 +51,7 @@ const UserList = memo(({ load, setLoad, setShowModal }) => {
     const changePage = (e, page) => {
         setPage(page);
         setLoad(true);
-    }
+    };
 
     return (
         <React.Fragment>
@@ -81,6 +83,6 @@ const UserList = memo(({ load, setLoad, setShowModal }) => {
             </div>
         </React.Fragment>
     )
-})
+});
 
-export default UserList
+export default UserList;

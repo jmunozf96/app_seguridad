@@ -1,31 +1,32 @@
-import React, { useEffect, useState } from "react"
-import { useDispatch, useSelector } from "react-redux"
-import { changeStatusForm, dataUser, resetModal, saveUser, updateUser }
+import React, {useEffect, useState} from "react"
+import {useDispatch, useSelector} from "react-redux"
+import {changeStatusForm, dataUser, resetModal, saveUser, updateUser}
     from "../../../redux/seguridad/userDucks"
+import InputFieldComponent from "../../InputFieldComponent";
 
 const UserForm = () => {
-    const dispatch = useDispatch()
-    const userRedux = useSelector(store => store.user)
+    const dispatch = useDispatch();
+    const userRedux = useSelector(store => store.user);
 
-    const [loadForm, setLoadForm] = useState(true)
-    const [getUser, setGetUSer] = useState(!userRedux.save)
+    const [loadForm, setLoadForm] = useState(true);
+    const [getUser, setGetUSer] = useState(!userRedux.save);
     const [user, setUser] = useState({
         name: "", email: "", password: "", password_confirmation: ""
-    })
+    });
 
     useEffect(() => {
         return () => {
             dispatch(changeStatusForm(true))//Para editar -> cambia estado de save a true
         }
-    }, [dispatch])
+    }, [dispatch]);
 
     useEffect(() => {
         if (loadForm) {
-            dispatch(resetModal())
+            dispatch(resetModal());
             setLoadForm(false)
         }
 
-    }, [loadForm, dispatch])
+    }, [loadForm, dispatch]);
 
     useEffect(() => {
         if (getUser) {
@@ -34,42 +35,26 @@ const UserForm = () => {
                 name: userRedux.data.name,
                 email: userRedux.data.email,
                 id: userRedux.data.id
-            })
+            });
 
             setGetUSer(false);
         }
-    }, [getUser, userRedux, user])
+    }, [getUser, userRedux, user]);
 
     const handleChange = (e) => {
         setUser({
             ...user,
             [e.target.name]: e.target.value
         })
-    }
+    };
 
     const submitForm = (e) => {
         e.preventDefault();
-
-        if (user.name.trim() === "") {
-            alert("Ingresar un nombre");
-            return;
-        }
-
-        if (user.email.trim() === "") {
-            alert("Ingresar un correo");
-            return
-        }
-
-        if (user.password.trim() === "") {
-            alert("Ingresar una contraseña");
-            return
-        }
 
         if (user.password_confirmation.trim() === "") {
             alert("Confirmar la contraseña");
             return
         }
-
 
         dispatch(dataUser(user));
         let response = false;
@@ -85,84 +70,76 @@ const UserForm = () => {
 
         if (response)
             resetForm()
-    }
+    };
 
     const resetForm = () => {
         setUser({
             name: "", email: "", password: "", password_confirmation: ""
         })
-    }
+    };
 
 
     return (
         <form onSubmit={(e) => submitForm(e)}>
             {userRedux.error && Array.isArray(userRedux.error) &&
-                <div className="alert alert-danger">
-                    {userRedux.error.map((error, i) =>
-                        <li key={i}>{error}</li>
-                    )}
-                </div>
+            <div className="alert alert-danger">
+                {userRedux.error.map((error, i) =>
+                    <li key={i}>{error}</li>
+                )}
+            </div>
             }
             {userRedux.process &&
-                <div className="alert alert-success">
-                    <i className="fas fa-check-circle" /> {userRedux.process.message}
-                </div>
+            <div className="alert alert-success">
+                <i className="fas fa-check-circle"/> {userRedux.process.message}
+            </div>
             }
-            <div className="form-group">
-                <label>Usuario</label>
-                <div className="input-group mb-2">
-                    <div className="input-group-prepend">
-                        <div className="input-group-text">
-                            <i className="fas fa-user" />
-                        </div>
-                    </div>
-                    <input name="name" value={user.name} onChange={(e) => handleChange(e)}
-                        type="text" className="form-control" required />
-                </div>
-            </div>
-            <div className="form-group">
-                <label>Correo</label>
-                <div className="input-group mb-2">
-                    <div className="input-group-prepend">
-                        <div className="input-group-text">
-                            <i className="fas fa-at" />
-                        </div>
-                    </div>
-                    <input name="email" value={user.email} onChange={(e) => handleChange(e)}
-                        type="email" className="form-control" required />
-                </div>
-            </div>
-            <div className="form-group">
-                <label>Contraseña</label>
-                <div className="input-group mb-2">
-                    <div className="input-group-prepend">
-                        <div className="input-group-text">
-                            <i className="fas fa-lock" />
-                        </div>
-                    </div>
-                    <input name="password" value={user.password} onChange={(e) => handleChange(e)}
-                        type="password" className="form-control" required autoComplete="new-password" />
-                </div>
-            </div>
-            <div className="form-group">
-                <label>Confirmar Contraseña</label>
-                <div className="input-group mb-2">
-                    <div className="input-group-prepend">
-                        <div className="input-group-text">
-                            <i className="fas fa-lock" />
-                        </div>
-                    </div>
-                    <input name="password_confirmation" value={user.password_confirmation} onChange={(e) => handleChange(e)}
-                        type="password" className="form-control" required />
-                </div>
-            </div>
+            <InputFieldComponent
+                label="Usuario"
+                name="name"
+                value={user.name}
+                icon="fas fa-user"
+                eventChange={handleChange}
+                error={userRedux.error}
+                required={false}
+            />
+            <InputFieldComponent
+                label="Correo"
+                name="email"
+                type="email"
+                value={user.email}
+                icon="fas fa-at"
+                eventChange={handleChange}
+                error={userRedux.error}
+                required={false}
+            />
+            <InputFieldComponent
+                label="Contraseña"
+                name="password"
+                type="password"
+                value={user.password}
+                icon="fas fa-lock"
+                eventChange={handleChange}
+                error={userRedux.error}
+                required={false}
+            />
+            <InputFieldComponent
+                label="Confirmar Contraseña"
+                name="password_confirmation"
+                type="password"
+                value={user.password_confirmation}
+                icon="fas fa-lock"
+                eventChange={handleChange}
+                error={userRedux.error}
+                required={false}
+                readOnly={!user.password}
+            />
             <button className="btn btn-success"
-                disabled={userRedux.loading}>
-                {userRedux.loading ? <i className="fas fa-spinner fa-pulse" /> : <i className="fas fa-save" />}
+                    disabled={userRedux.loading || !user.password_confirmation}>
+                {userRedux.loading ? <i className="fas fa-spinner fa-pulse"/> : <i className="fas fa-save"/>}
                 {" "}Guardar
             </button>
         </form>
     )
-}
+};
 
 export default UserForm

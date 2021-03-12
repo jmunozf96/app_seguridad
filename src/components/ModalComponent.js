@@ -28,6 +28,6 @@ const ModalComponent = (props) => {
             </div>
         </Modal>
     );
-}
+};
 
 export default ModalComponent;

@@ -1,17 +1,17 @@
-import { useEffect, useState } from "react"
+import React, { useEffect, useState } from "react"
 import { useDispatch } from "react-redux"
 import jwt from "jsonwebtoken"
 import { cerrarSesionAccion } from "../../redux/seguridad/authDucks";
 
 const VerifyToken = ({ children }) => {
-    const dispatch = useDispatch()
+    const dispatch = useDispatch();
     const [loadingComponent, setLoadingComponent] = useState(false);
 
     useEffect(() => {
         if (localStorage.getItem('_token')) {
-            const _token = JSON.parse(localStorage.getItem('_token'))
-            const decode_token = jwt.decode(_token, { complete: true })
-            var dateNow = new Date();
+            const _token = JSON.parse(localStorage.getItem('_token'));
+            const decode_token = jwt.decode(_token, { complete: true });
+            let dateNow = new Date();
 
             if (decode_token.payload.exp > (dateNow.getTime() / 1000)) {
                 setLoadingComponent(true);
@@ -20,14 +20,14 @@ const VerifyToken = ({ children }) => {
         }
 
         (async () => {
-            const response = dispatch(cerrarSesionAccion())
-            response.catch(error => {
-                console.log(error)
+            const response = dispatch(cerrarSesionAccion());
+            await response.catch(error => {
+                console.log(error);
                 setLoadingComponent(true);
             })
         })();
 
-    }, [dispatch])
+    }, [dispatch]);
 
     if (!loadingComponent) {
         return (
@@ -41,6 +41,6 @@ const VerifyToken = ({ children }) => {
         return children
     }
 
-}
+};
 
 export default VerifyToken

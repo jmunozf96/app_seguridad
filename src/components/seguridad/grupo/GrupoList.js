@@ -7,8 +7,8 @@ import GrupoItem from "./GrupoItem";
 
 
 const GrupoList = memo(({ load, setLoad, setShowModal, setShowModalPermisos }) => {
-    const auth = useSelector(store => store.auth.user)
-    const gpermisoRedux = useSelector(store => store.gpermiso)
+    const auth = useSelector(store => store.auth.user);
+    const gpermisoRedux = useSelector(store => store.gpermiso);
 
     const [page, setPage] = useState(1);
     const [grupos, setGrupos] = useState(null);
@@ -17,13 +17,13 @@ const GrupoList = memo(({ load, setLoad, setShowModal, setShowModalPermisos }) =
         (async => {
             GrupoService.all(page, auth._token)
                 .then(response => {
-                    const { data } = response
+                    const { data } = response;
                     setGrupos(data.response);
                 }).catch(error => {
                     console.log(error);
                 })
         })();
-    }, [auth])
+    }, [auth]);
 
     useEffect(() => {
         if (load) {
@@ -36,12 +36,12 @@ const GrupoList = memo(({ load, setLoad, setShowModal, setShowModalPermisos }) =
         if (gpermisoRedux.process) {
             setLoad(true);
         }
-    }, [gpermisoRedux, setLoad])
+    }, [gpermisoRedux, setLoad]);
 
     const changePage = (e, page) => {
         setPage(page);
         setLoad(true);
-    }
+    };
 
     return (
         <TableComponent
@@ -61,6 +61,6 @@ const GrupoList = memo(({ load, setLoad, setShowModal, setShowModalPermisos }) =
             )}
         </TableComponent>
     )
-})
+});
 
 export default GrupoList

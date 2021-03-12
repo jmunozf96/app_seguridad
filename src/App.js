@@ -11,7 +11,8 @@ import * as constants from "./helpers/constants";
 
 
 function App() {
-  const store = generateStore()
+  const store = generateStore();
+
   return (
     <Provider store={store}>
       <Router basename={constants.URL_BASE_NAME}>
